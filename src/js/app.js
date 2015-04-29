@@ -17,6 +17,22 @@
                 this.notes = {};
                 this.lastId = 0;
             }
+            return notes;
+        },
+
+        add : function(text) {
+            var lastId = ++this.lastId;
+            var note = {
+                id: lastId,
+                date: Date.now(),
+                text: text
+            };
+            this.notes[lastId] = note;
+            return {lastId : note};
+        },
+
+        remove : function(id) {
+            delete(this.notes[id]);
         }
     };
 
@@ -25,40 +41,17 @@
         init : function() {
             model.init();
             view.init();
-            view.render(octopus.getVisibleNote());
         },
 
         addNote : function(text) {
-            var lastId = ++model.lastId;
-            var note = {
-                id: lastId,
-                date: Date.now(),
-                text: text,
-                visible: true
-            };
-            model.notes[lastId] = note;
-            console.log(model.notes);
+            var note = model.add(text);
             this.setCache('notes', model.notes);
-            view.render({lastId : note});
+            view.render(note);
         },
 
-        removeNote : function(id) {
-            model.notes[id].visible = false;
+        deleteNote : function(id) {
+            model.remove(id);
             this.setCache('notes', model.notes);
-        },
-
-        getVisibleNote : function() {
-            var notes = model.notes;
-            var result = {};
-
-            if (Object.keys(notes).length) {
-                for(note in notes){
-                    if (notes[note].visible) {
-                        result[note] = notes[note];
-                    }
-                }
-            }
-            return result;
         },
 
         getCache : function(item) {
@@ -94,14 +87,16 @@
                     evt.target.value = '';
                 }
             });
+
+            this.render(model.notes);
         },
 
         render : function(notes) {
             var elem, currentNote;
             notes = notes || {};
-            // console.log(notes);
+
             if (Object.keys(notes).length) {
-                for(note in notes){
+                for(var note in notes){
                     currentNote = notes[note];
                     elem = document.createElement('li');
                     elem.setAttribute('class', 'note group');
@@ -111,10 +106,10 @@
 
                     elem.children[0].addEventListener('click', (function(noteCopy) {
                         return function(evt) {
+                            octopus.deleteNote(noteCopy.id);
+                            evt.target.parentNode.remove();
                             evt.preventDefault();
-                            octopus.removeNote(noteCopy.id);
-                            elem.remove();
-                        }
+                        };
                     })(currentNote));
                 }
 
@@ -137,13 +132,13 @@
                 } else {
                     s = s.replace(
                             new RegExp('{{date}}','g'),
-                            new Date(d['date']).toDateString()
+                            new Date(d.date).toDateString()
                         );
                 }
             }
             return s;
         }
-    }
+    };
 
     /*-----  End of Utils  ------*/
 

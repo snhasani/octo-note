@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Octopus Note</title>
+    <style>
+        *,:before,:after{box-sizing:border-box}html{font-size:10px}body{background-color:#838383;margin:0}a{text-decoration:none}.group:after{content:"";display:table;clear:both}header{padding:50px 5%;text-align:center}.main{margin:0 auto;max-width:70em}.logo{color:#3ECCFF;font-size:5rem;margin:0}.note-input-wrapper{padding:0 5%;margin-bottom:40px}.note-input{background-color:#7B7A7A;border:1px solid #939393;border-top-color:#6E6E6E;color:#e7e7e7;font-size:2rem;padding:7px 9px 5px;width:100%}.note-input:focus,.note__remove-btn:focus{outline:#CFCFCF auto 5px}.note-list{list-style-type:none;margin:0;padding:0 5%}.note{border:1px solid #777171;border-top-color:#888;display:table;margin-bottom:20px;box-shadow:0 7px 9px #646464;min-width:100%}.note:last-child{margin-bottom:0}.note__remove-btn{background-color:#7B7A7A;border-right:1px solid #888;color:#696969;display:table-cell;font-size:3rem;font-family:arial;padding:0 8px;width:30px;vertical-align:middle;-webkit-transition:all .3s;transition:all .3s}.note__remove-btn:hover{color:#c00000}.note__content{background-color:#7B7A7A;border-left:1px solid #717171;padding:8px 8px 3px;text-align:left}.note__content>.text{color:#F4E927;font-family:tahoma,sans-serif;font-size:1.8rem;padding-bottom:8px;margin:0;word-break:break-word}.note__content>.date{color:#474747;font-size:1.3rem;margin:0}@media (min-width:30em){.note{min-width:90%;margin-left:5%;margin-right:5%}}@media (min-width:50em){.logo{font-size:7rem}.note-list{margin:40px auto 0}.note{min-width:80%;margin-left:10%;margin-right:10%}}
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1 class="logo">Octo Note</h1>
+    </header>
+
+    <section class="main">
+        <div class="note-input-wrapper">
+            <input type="text" name="note" class="note-input" placeholder="enter Note and press Enter"/></div>
+        </div>
+        <ul class="note-list group"></ul>
+    </section>
+
+    <script data-template="note" type="text/template">
+        <a href="" class="note__remove-btn" data-id="{{id}}" title="remove">&#10060;</a>
+        <div class="note__content">
+            <p class="text">{{text}}</p>
+            <p class="date">{{date}}</p>
+        </div>
+    </script>
+
+    <script>
+        !function(a,b,c){var d={init:function(){var a=e.getCache("notes");return a?(this.notes=a,this.lastId=Object.keys(a).length):(this.notes={},this.lastId=0),a},add:function(a){var b=++this.lastId,c={id:b,date:Date.now(),text:a};return this.notes[b]=c,{lastId:c}},remove:function(a){delete this.notes[a]}},e={init:function(){d.init(),f.init()},addNote:function(a){var b=d.add(a);this.setCache("notes",d.notes),f.render(b)},deleteNote:function(a){d.remove(a),this.setCache("notes",d.notes)},getCache:function(b){var c=a.localStorage[b];return c&&(c=JSON.parse(c)),c},setCache:function(b,c){a.localStorage[b]=JSON.stringify(c)}},f={init:function(){this.noteInput=b.getElementsByClassName("note-input"),this.noteListWrapper=b.getElementsByClassName("note-list"),this.template=b.querySelector("script[data-template]").innerHTML,this.noteInput[0].addEventListener("keyup",function(a){var b=a.target.value;13===a.keyCode&&b&&(e.addNote(b),a.target.value="")}),this.render(d.notes)},render:function(a){var c,d;if(a=a||{},Object.keys(a).length)for(var f in a)d=a[f],c=b.createElement("li"),c.setAttribute("class","note group"),c.innerHTML=g.twt(this.template,d),this.noteListWrapper[0].appendChild(c),c.children[0].addEventListener("click",function(a){return function(b){e.deleteNote(a.id),b.target.parentNode.remove(),b.preventDefault()}}(d));else this.noteListWrapper[0].innerHTML=""}},g={twt:function(a,b){var c=a;for(var d in b)c="date"!==d?c.replace(new RegExp("{{"+d+"}}","g"),b[d]):c.replace(new RegExp("{{date}}","g"),new Date(b.date).toDateString());return c}};a.addEventListener("DOMContentLoaded",e.init,!1)}(window,document);
+    </script>
+</body>
+</html>
